@@ -1,0 +1,10 @@
+[package]
+name = "test_project"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+nalgebra = "0.33.2"
+risc0-zkvm = { version = "1.1.2", default-features = false, features = ['std'] }
