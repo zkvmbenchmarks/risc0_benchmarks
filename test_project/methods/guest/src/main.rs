@@ -1,14 +1,10 @@
 use risc0_zkvm::{guest::env};
+mod vecSum10;
 
 fn main() {
     let test_name: String = env::read::<String>();
-    if test_name == "sum10" {
-        let input = initialize_large_array(10);
-        let sum: i32 = input.iter().sum();
-        env::commit(&sum);
+    if test_name == "vecSum10" {
+        let result: i32 = vecSum10::test_func();
+        env::commit(&result);
     }
-}
-
-fn initialize_large_array(size: usize) -> Vec<i32> {
-    (0..size as i32).rev().collect()
 }
