@@ -5,6 +5,7 @@ use methods::{
 };
 use risc0_zkvm::{default_prover, ExecutorEnv};
 use std::env;
+mod benchmarker;
 
 fn main() {
     tracing_subscriber::fmt()
@@ -22,9 +23,14 @@ fn main() {
 
     let prover = default_prover();
 
+    let mut benchmarker = benchmarker::Benchmarker::new();
+    benchmarker.start_benchmark();
+
     let prove_info = prover
         .prove(env, TEST_PROJECT_ELF)
         .unwrap();
+
+    let duration = benchmarker.end_benchmark();
 
     let receipt = prove_info.receipt;
 
@@ -32,6 +38,11 @@ fn main() {
 
     let _output: u32 = receipt.journal.decode().unwrap();
     println!("{} results: {}", input, _output); // Example output
+    if let Some(duration) = duration {
+        println!("Time it took to prove: {:?}", duration); // Example output
+    } else {
+        println!("Time it took to prove: None");
+    }
     receipt
         .verify(TEST_PROJECT_ID)
         .unwrap();
