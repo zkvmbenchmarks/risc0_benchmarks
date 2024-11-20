@@ -11,12 +11,8 @@ fn main() {
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
-    // let input: usize = 10_000; // merge_sort
-    // let (num_iter, data): (u32, Vec<u8>) = (24, vec![12, 4, 123, 6, 6]);
-    // let input = (num_iter, data); // sha2
-    let input = initialize_large_array(10);
-
-    let test_name = env::var("TEST_NAME").expect("TEST_NAME environment variable not set");
+    
+    let input = env::var("TEST_NAME").expect("TEST_NAME environment variable not set");
 
     let env = ExecutorEnv::builder()
         .write(&input)
@@ -35,8 +31,7 @@ fn main() {
     // TODO: Implement code for retrieving receipt journal here.
 
     let _output: u32 = receipt.journal.decode().unwrap();
-    println!("Fibonacci number {:?}: {}", input,  _output); // Example output
-    println!("Running test: {}", test_name);
+    println!("{} results: {}", input, _output); // Example output
     receipt
         .verify(TEST_PROJECT_ID)
         .unwrap();
