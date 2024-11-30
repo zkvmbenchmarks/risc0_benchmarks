@@ -4,6 +4,8 @@ use methods::{
 use risc0_zkvm::{default_prover, ExecutorEnv};
 use std::env;
 mod benchmarker;
+use bincode;
+use std::mem;
 
 fn main() {
     tracing_subscriber::fmt()
@@ -31,7 +33,9 @@ fn main() {
 
     let receipt = prove_info.receipt;
 
-    // TODO: Implement code for retrieving receipt journal here.
+    let serialized_receipt = bincode::serialize(&receipt).unwrap();
+    let size_in_bytes = serialized_receipt.len();
+    println!("Size of receipt in bytes: {}", size_in_bytes);
 
     let _output: u32 = receipt.journal.decode().unwrap();
     println!("{} results: {}", input, _output); // Example output
