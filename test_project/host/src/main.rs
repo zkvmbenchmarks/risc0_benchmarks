@@ -47,7 +47,16 @@ fn main() {
         println!("Benchmarking data not available");
     }
 
+    let mut verifying_benchmarker = benchmarker::Benchmarker::new();
+    verifying_benchmarker.start_benchmark();
     receipt
         .verify(TEST_PROJECT_ID)
         .unwrap();
+    let verifying_benchmark_results = verifying_benchmarker.end_benchmark();
+    if let Some((duration, peak_memory)) = verifying_benchmark_results {
+        println!("Time it took to verify: {:?}", duration); // Example output
+        println!("Peak memory consumption during verification: {} KB", peak_memory); // Example output
+    } else {
+        println!("Benchmarking data not available");
+    }
 }
