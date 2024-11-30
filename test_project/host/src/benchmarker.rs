@@ -7,7 +7,6 @@ use sysinfo::{System, SystemExt, ProcessExt};
 pub struct Benchmarker {
     start_time: Option<Instant>,
     peak_memory: Arc<AtomicU64>,
-    system: System,
     monitoring_thread: Option<thread::JoinHandle<()>>,
     is_running: Arc<AtomicBool>,
 }
@@ -19,7 +18,6 @@ impl Benchmarker {
         Benchmarker { 
             start_time: None,
             peak_memory: Arc::<AtomicU64>::new(0.into()),
-            system,
             monitoring_thread: None,
             is_running: Arc::new(AtomicBool::new(false)),
         }

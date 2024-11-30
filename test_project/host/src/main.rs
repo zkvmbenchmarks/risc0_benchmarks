@@ -5,7 +5,6 @@ use risc0_zkvm::{default_prover, ExecutorEnv};
 use std::env;
 mod benchmarker;
 use bincode;
-use std::mem;
 
 fn main() {
     tracing_subscriber::fmt()
@@ -22,41 +21,39 @@ fn main() {
 
     let prover = default_prover();
 
+    //starts time and peak memory benchmark measurements, proves test project, then ends benchmarks measurements
     let mut benchmarker = benchmarker::Benchmarker::new();
     benchmarker.start_benchmark();
-
     let prove_info = prover
         .prove(env, TEST_PROJECT_ELF)
         .unwrap();
-
     let benchmark_results = benchmarker.end_benchmark();
 
-    let receipt = prove_info.receipt;
-
-    let serialized_receipt = bincode::serialize(&receipt).unwrap();
-    let size_in_bytes = serialized_receipt.len();
-    println!("Size of receipt in bytes: {}", size_in_bytes);
-
-    let _output: u32 = receipt.journal.decode().unwrap();
-    println!("{} results: {}", input, _output); // Example output
-
+    //log proving benchmark results
     if let Some((duration, peak_memory)) = benchmark_results {
-        println!("Time it took to prove: {:?}", duration); // Example output
-        println!("Peak memory consumption: {} KB", peak_memory); // Example output
-    } else {
-        println!("Benchmarking data not available");
+        println!("Proving time: {:?}", duration);
+        println!("Peak memory consumption during proving: {} KB", peak_memory);
     }
 
+    //take out the receipt
+    let receipt = prove_info.receipt;
+
+    //serialize the receipt to its bytes and log its size in kb
+    let serialized_receipt = bincode::serialize(&receipt).unwrap();
+    let size_in_kb = serialized_receipt.len() as f64 / 1024.0;
+    println!("Proof size: {} KB", size_in_kb);
+
+    //starts time and peak memory benchmarks measurements, verifies the receipt, then ends benchmarks measurements
     let mut verifying_benchmarker = benchmarker::Benchmarker::new();
     verifying_benchmarker.start_benchmark();
     receipt
         .verify(TEST_PROJECT_ID)
         .unwrap();
     let verifying_benchmark_results = verifying_benchmarker.end_benchmark();
+
+    //logs verification benchmark results
     if let Some((duration, peak_memory)) = verifying_benchmark_results {
-        println!("Time it took to verify: {:?}", duration); // Example output
-        println!("Peak memory consumption during verification: {} KB", peak_memory); // Example output
-    } else {
-        println!("Benchmarking data not available");
+        println!("Verification time: {:?}", duration);
+        println!("Peak memory consumption during verification: {} KB", peak_memory);
     }
 }
