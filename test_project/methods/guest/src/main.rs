@@ -1,7 +1,15 @@
 use risc0_zkvm::{guest::env};
+mod vec_sum10;
+mod vec_sum100;
 
 fn main() {
-    let mut big_input: Vec<i32> = env::read();
-    let sum: i32 = big_input.iter().sum();
-    env::commit(&sum);
+    let test_name: String = env::read::<String>();
+    if test_name == "vecSum10" {
+        let result: i32 = vec_sum10::test_func();
+        env::commit(&result);
+    }
+    else if test_name == "vecSum100" {
+        let result: i32 = vec_sum100::test_func();
+        env::commit(&result);
+    }
 }
